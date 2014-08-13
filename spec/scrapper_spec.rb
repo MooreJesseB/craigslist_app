@@ -11,22 +11,25 @@ describe "scrapper" do
   end
 
   describe "filter_links" do
-    it "should here is an example of using the befor each data" do
+    arr = []
+    it "should return the correct number of rows" do
       rows = @doc.css(".row")
       rows.each do |row|
-        puts row.content
+        # puts row.content
+        arr.push(row)
       end
-      expect("your attention").to eql("this test to be erased or edited")
+      expect(arr.length).to eql(100)
     end
 
-    it "you can also use a string" do
+    it "should return the correct number of filtered dog rows" do
       # rowsString is contains one valid row
-      rowsString =  '<p class="row" data-pid="4581207234"> <a href="/sfc/pet/4581207234.html" class="i" data-id="0:00F0F_kUje2CUzekG"></a> <span class="txt"> <span class="star"></span> <span class="pl"> <span class="date">Aug 12</span>  <a href="/sfc/pet/4581207234.html" data-id="4581207234" class="hdrlnk">$25/night In Home Dog Sitter! Small Dog Retreat &#9829;</a> </span> <span class="l2">   <span class="pnr"> <small> (Bay Area)</small> <span class="px"> <span class="p"> pic&nbsp;<span class="maptag" data-pid="4581207234">map</span></span></span> </span>  </span> </span> </p>'
-      rows = Nokogiri::HTML(rowsString)
-      expect(filter_links(rows, @today).length).to eql(1)
+      newArr = []
+      arr.each do |row|
+        if row.text.match(/(dog)|(Dog)/) != nil
+          newArr.push(row)
+        end
+       end
+      expect(newArr.length).to eql(48)
     end
-  end
-
-  describe "get_todays_rows" do
   end
 end

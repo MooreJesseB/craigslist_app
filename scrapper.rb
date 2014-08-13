@@ -1,23 +1,29 @@
 # scrapper.rb
 require 'nokogiri'
 require 'open-uri'
-
-
+require 'awesome_print'
 
 def filter_links(rows, regex)
-  # takes in rows and returns uses
-  # regex to only return links 
-  # that have "pup", "puppy", or "dog"
-  # keywords
+  arr = []
+  rows.each do |item|
+    if item.css("a").text.match(/#{regex}/) != nil && item.text.match(/(house)|(item)|(boots)|(rescue)/) == nil
+      if item.css(".p") != nil
+        arr.push(item)
+      end
+    end
+  end
+  return arr
 end
 
 def get_todays_rows(doc, date_str)
-  #  1.) open chrome console to look in inside p.row to see
-  #  if there is some internal date related content
-
-  #  2.) figure out the class that you'll need to select the
-  #   date from a row
-
+  arr = []
+  doc.css(".row").each do |item|
+    # puts item
+    if item.text.match(/(#{date_str})/) != nil && item.text.match(/(house)|(item)|(boots)|(rescue)|/) != nil
+      arr.push(item) 
+    end
+  end
+  return arr
 end
 
 def get_page_results
@@ -26,7 +32,16 @@ def get_page_results
 end
 
 def search(date_str)
-  get_page_results
+  page = get_page_results
+  arr = get_todays_rows(page, date_str)
+  arr = filter_links(arr, "(puppy)|(Puppy)|(puppies)|(Puppies)|(dog)|(Dog)|(pup)|(Pup)")
+  arr.each do |item|
+    ap item.css("a").text
+    ap item.css("a")[0]["href"]
+    ap "*"*60
+    
+  end
+  ap arr.length
 end
 
 # want to learn more about 
